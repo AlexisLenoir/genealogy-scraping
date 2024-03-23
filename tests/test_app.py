@@ -1,8 +1,7 @@
 import pytest
 import sys
 
-# sys.path.append('/Users/alexislenoir/python3.10_ws/extract_roglo/sam-app/src')
-sys.path.append("sam-app/src")
+sys.path.append("genealogy_scraping/src")
 import app
 import os
 from bs4 import BeautifulSoup
