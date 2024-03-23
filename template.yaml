@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A distributed app for extracting ancestors data from roglo
+
+Resources:
+  AncestorsDataBucket:
+    Type: AWS::S3::Bucket
+
+  ExtractRogloPage:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.lambda_handler
+      Runtime: python3.10
+      FunctionName: extract-roglo-page
+      Timeout: 15
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MySqsQueue.Arn
+            BatchSize: 1
+      Environment:
+        Variables:
+          bucketName: !Ref AncestorsDataBucket
+          mainQueueUrl : !GetAtt MySqsQueue.QueueUrl
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "s3:PutObject"
+                - "s3:GetObject"
+                - "s3:ListBucket"
+              Resource: 
+                - !Sub "arn:aws:s3:::${AncestorsDataBucket}/*"
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "sqs:SendMessage"
+              Resource: 
+                - !GetAtt MySqsQueue.Arn
+
+  MySqsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: mainQueue-extractRoglo
+      VisibilityTimeout: 90
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt MySqsDlq.Arn
+        maxReceiveCount: 5
+
+  MySqsDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: deadLetterQueue-extractRoglo
+
+ 
+    

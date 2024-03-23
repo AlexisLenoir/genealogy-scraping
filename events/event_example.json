@@ -1,0 +1,20 @@
+{
+    "Records": [
+        {
+            "messageId": "X",
+            "receiptHandle": "X",
+            "body": "{\"ancestor_id\": 7766850, \"level\": 0}",
+            "attributes": {
+                "ApproximateReceiveCount": "1",
+                "SentTimestamp": "X",
+                "SenderId": "X",
+                "ApproximateFirstReceiveTimestamp": "X"
+            },
+            "messageAttributes": {},
+            "md5OfBody": "X",
+            "eventSource": "aws:sqs",
+            "eventSourceARN": "X",
+            "awsRegion": "us-east-2"
+        }
+    ]
+}
